@@ -9,6 +9,10 @@ from utils.fp16 import network_to_half
 import os
 from torch2trt import torch2trt
 
+FP32 = False
+FP16 = False
+INT8 = True
+
 # make results
 os.makedirs("results", exist_ok=True)
 
@@ -44,33 +48,47 @@ results = []
 for model_name in modellist:
     runtimes = []
     
-    # define model
-    print("model: {}".format(model_name))
-    mdl = globals()[model_name]
-    model = mdl().cuda().eval()
-    # define input
-    input_size = [1, 3, 256, 256]
-    x = torch.zeros(input_size).cuda()
+    if FP32:
+	# define model
+        print("model: {}".format(model_name))
+        mdl = globals()[model_name]
+        model = mdl().cuda().eval()
+        # define input
+        input_size = [1, 3, 256, 256]
+        x = torch.zeros(input_size).cuda()
 
-    # convert to tensorrt models
-    model_trt = torch2trt(model, [x])
+        # convert to tensorrt models
+        model_trt = torch2trt(model, [x])
 
-    # Run TensorRT models
-    runtimes.append(computeTime(model_trt, input_size=input_size, device="cuda", FP16=False))
-    
-    print("running fp16 models..")
-    # Make FP16 tensorRT models
-    mdl = globals()[model_name]
-    model = mdl().eval().half().cuda()
-    # define input
-    input_size = [1, 3, 256, 256]
-    x = torch.zeros(input_size).half().cuda()
-    # convert to tensorrt models
-    model_trt = torch2trt(model, [x], fp16_mode=True)
-    # Run TensorRT models
-    runtimes.append(computeTime(model_trt, input_size=input_size, device="cuda", FP16=True))
+        # Run TensorRT models
+        runtimes.append(computeTime(model_trt, input_size=input_size, device="cuda", FP16=False))
+    if FP16:
+        print("running fp16 models..")
+        # Make FP16 tensorRT models
+        mdl = globals()[model_name]
+        model = mdl().eval().half().cuda()
+	# define input
+        input_size = [1, 3, 256, 256]
+        x = torch.zeros(input_size).half().cuda()
+        # convert to tensorrt models
+        model_trt = torch2trt(model, [x], fp16_mode=True)
+        # Run TensorRT models
+        runtimes.append(computeTime(model_trt, input_size=input_size, device="cuda", FP16=True))
 
-    results.append({model_name: runtimes})
+        results.append({model_name: runtimes})
+    if INT8:
+        print("running int8 models..")
+        # Make INT8 tensorRT models
+        mdl = globals()[model_name]
+        model = mdl().eval().half().cuda()
+        # define input
+        input_size = [2, 3, 256, 256]
+        x = torch.randn(input_size).half().cuda()
+        # convert to tensorrt models
+        model_trt = torch2trt(model, [x], fp16_mode=True, int8_mode=True)
+        # Run TensorRT models
+        runtimes.append(computeTime(model_trt, input_size=input_size, device="cuda", FP16=True))
+        results.append({model_name: runtimes})
 
 print(results)
 
