@@ -1,0 +1,66 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+import numpy as np
+import torch
+import time
+from torchvision.models import *
+from utils.fp16 import network_to_half
+import os
+from torch2trt import torch2trt
+
+# make results
+os.makedirs("results", exist_ok=True)
+
+def computeTime(model, input_size=[1, 3, 224, 224], device='cuda', FP16=False):
+    inputs = torch.randn(input_size)
+    if device == 'cuda':
+        inputs = inputs.cuda()
+    if FP16:
+        model = network_to_half(model)
+
+    i = 0
+    time_spent = []
+    while i < 200:
+        start_time = time.time()
+        with torch.no_grad():
+            _ = model(inputs)
+
+        if device == 'cuda':
+            torch.cuda.synchronize() # wait for cuda to finish (cuda is asynchronous!)
+        if i != 0:
+            time_spent.append(time.time() - start_time)
+        i += 1
+    print('Avg execution time (ms): {:.3f}'.format(np.mean(time_spent)))
+    return np.mean(time_spent)
+
+
+modellist = ["resnet18", "resnet34", "resnet50", "resnet101", "resnet152",  "resnext50_32x4d", "resnext101_32x8d", "mnasnet1_0", "squeezenet1_0", "densenet121", "densenet169", "inception_v3"]
+
+# resnet is enought for now
+modellist = ["resnet18", "resnet34", "resnet50"]
+results = []
+
+for model_name in modellist:
+    runtimes = []
+    
+    # define model
+    print("model: {}".format(model_name))
+    mdl = globals()[model_name]
+    model = mdl().cuda().eval()
+    # define input
+    input_size = [1, 3, 256, 256]
+    x = torch.zeros(input_size).cuda()
+
+    # convert to tensorrt models
+    model_trt = torch2trt(model, [x])
+
+    # Run TensorRT models
+    runtimes.append(computeTime(model_trt, input_size=input_size, device="cuda", FP16=False))
+    
+    results.append({model_name: runtimes})
+
+print(results)
+
+
+
