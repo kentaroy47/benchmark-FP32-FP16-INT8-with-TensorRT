@@ -58,6 +58,18 @@ for model_name in modellist:
     # Run TensorRT models
     runtimes.append(computeTime(model_trt, input_size=input_size, device="cuda", FP16=False))
     
+    print("running fp16 models..")
+    # Make FP16 tensorRT models
+    mdl = globals()[model_name]
+    model = mdl().eval().half().cuda()
+    # define input
+    input_size = [1, 3, 256, 256]
+    x = torch.zeros(input_size).half().cuda()
+    # convert to tensorrt models
+    model_trt = torch2trt(model, [x], fp16_mode=True)
+    # Run TensorRT models
+    runtimes.append(computeTime(model_trt, input_size=input_size, device="cuda", FP16=True))
+
     results.append({model_name: runtimes})
 
 print(results)
