@@ -3,6 +3,9 @@ Benchmark inference speed of CNNs with various quantization methods in Pytorch!
 
 # Image classification
 
+Run:
+`inference_tensorrt.py`
+
 ## Hardware:Jetson Nano.
 Models are converted to TensorRT unless noted.
 
@@ -27,7 +30,16 @@ Latency of image inference (1,3,256,256) [ms]
 | Raw  | 11       | 12       | 16       |
 | FP32 | 3.8      | 5.6      | 9.9      |
 | FP16 | 2.1      | 3.3      | 4.4      |
-| INT8 | 1.7      | 2.7      | 3.9      |
+| INT8 | 1.7      | 2.7      | 3.0     |
+
+# Image segmentation
+
+## Hardware:Jetson Xavier.
+
+U-net models are converted to TensorRT unless noted.
+
+Latency of image inference (1,3,512,512) [ms]
+
 
 ## FP32 vs FP16
 `inference_FP32_vs_FP16.ipynb`

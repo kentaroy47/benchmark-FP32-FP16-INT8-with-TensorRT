@@ -89,10 +89,10 @@ for i, model_name in enumerate(modellist):
         mdl = globals()[model_name]
         model = mdl().eval().half().cuda()
         # define input
-        input_size = [2, 3, 256, 256]
+        input_size = [1, 3, 256, 256]
         x = torch.randn(input_size).half().cuda()
         # convert to tensorrt models
-        model_trt = torch2trt(model, [x], fp16_mode=True, int8_mode=True, max_batch_size=2)
+        model_trt = torch2trt(model, [x], fp16_mode=True, int8_mode=True, max_batch_size=1)
         # Run TensorRT models
         input_size = [1, 3, 256, 256]
         runtimes.append(computeTime(model_trt, input_size=input_size, device="cuda", FP16=True))
