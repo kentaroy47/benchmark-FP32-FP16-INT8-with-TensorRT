@@ -8,9 +8,10 @@ from torchvision.models import *
 from utils.fp16 import network_to_half
 import os
 from torch2trt import torch2trt
+import pandas as pd
 
-FP32 = False
-FP16 = False
+FP32 = True
+FP16 = True
 INT8 = True
 
 # make results
@@ -45,9 +46,15 @@ modellist = ["resnet18", "resnet34", "resnet50", "resnet101", "resnet152",  "res
 modellist = ["resnet18", "resnet34", "resnet50"]
 results = []
 
-for model_name in modellist:
+for i, model_name in enumerate(modellist):
     runtimes = []
-    
+
+    input_size = [1, 3, 256, 256]
+    mdl = globals()[model_name]
+    model = mdl().cuda().eval()
+    # Run raw models
+    runtimes.append(computeTime(model, input_size=input_size, device="cuda", FP16=False))
+
     if FP32:
 	# define model
         print("model: {}".format(model_name))
@@ -85,12 +92,18 @@ for model_name in modellist:
         input_size = [2, 3, 256, 256]
         x = torch.randn(input_size).half().cuda()
         # convert to tensorrt models
-        model_trt = torch2trt(model, [x], fp16_mode=True, int8_mode=True)
+        model_trt = torch2trt(model, [x], fp16_mode=True, int8_mode=True, max_batch_size=2)
         # Run TensorRT models
+        input_size = [1, 3, 256, 256]
         runtimes.append(computeTime(model_trt, input_size=input_size, device="cuda", FP16=True))
         results.append({model_name: runtimes})
 
-print(results)
+    if i == 0:
+        df = pd.DataFrame({model_name: runtimes},
+                         index = ["Raw", "FP32", "FP16", "INT8"])
+    else:
+        df[model_name] = runtimes
 
-
+df.to_csv("results/xavier.csv")
+df
 
