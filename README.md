@@ -36,10 +36,16 @@ Latency of image inference (1,3,256,256) [ms]
 
 ## Hardware:Jetson Xavier.
 
-U-net models are converted to TensorRT unless noted.
+Models are converted to TensorRT unless noted.
 
 Latency of image inference (1,3,512,512) [ms]
 
+|      | fcn_resnet50 | fcn_resnet101 | deeplabv3_resnet50 | deeplabv3_resnet101 |
+|------|--------------|---------------|--------------------|---------------------|
+| Raw  | 200          | 344           | 281                | 426                 |
+| FP32 | 173          | 290           | 252                | 366                 |
+| FP16 | 36           | 57            | 130                | 151                 |
+| INT8 | 21           | 32            | 97                 | 108                 |
 
 ## FP32 vs FP16
 `inference_FP32_vs_FP16.ipynb`
