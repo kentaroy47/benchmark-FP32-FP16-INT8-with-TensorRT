@@ -57,3 +57,34 @@ Latency of image inference (1,3,256,256) [ms]
 | FP32 | 767          | 
 | FP16 | 40           | 
 | INT8 | NA           | 
+
+# Hardware setup
+The hardware setup seems tricky.
+
+* Install pytorch
+https://forums.developer.nvidia.com/t/pytorch-for-jetson-nano-version-1-4-0-now-available/72048
+
+**The stable version for Jetson nano seems to be torch==1.1**
+
+**For Xavier, torch==1.3 worked fine for me.**
+
+* Install torchvision
+I followed this instruction and installed torchvision==0.3.0
+https://medium.com/hackers-terminal/installing-pytorch-torchvision-on-nvidias-jetson-tx2-81591d03ce32
+
+```bash
+sudo apt-get install libjpeg-dev zlib1g-dev
+git clone -b v0.3.0 https://github.com/pytorch/vision torchvision
+cd torchvision
+sudo python3 setup.py install
+```
+
+* Install torch2trt
+Followed readme.
+https://github.com/NVIDIA-AI-IOT/torch2trt
+```bash
+sudo apt-get install libprotobuf* protobuf-compiler ninja-build
+git clone https://github.com/NVIDIA-AI-IOT/torch2trt
+cd torch2trt
+sudo python3 setup.py install --plugins 
+```
