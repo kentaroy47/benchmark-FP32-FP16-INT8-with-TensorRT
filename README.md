@@ -47,8 +47,13 @@ Latency of image inference (1,3,512,512) [ms]
 | FP16 | 36           | 57            | 130                | 151                 |
 | INT8 | 21           | 32            | 97                 | 108                 |
 
-## FP32 vs FP16
-`inference_FP32_vs_FP16.ipynb`
+## Hardware:Jetson Nano.
 
-Benchmarks inference speed with FP32 and FP16 with amp.
+Latency of image inference (1,3,256,256) [ms]
 
+|      | fcn_resnet50 | 
+|------|--------------|
+| Raw  | 6800          | 
+| FP32 | 767          | 
+| FP16 | 40           | 
+| INT8 | NA           | 
