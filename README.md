@@ -1,6 +1,8 @@
 # Benchmark-FP32-FP16-INT8-with-TensorRT
 Benchmark inference speed of CNNs with various quantization methods with TensorRT!
 
+:star: if it helps you.
+
 # Image classification
 
 Run:
