@@ -9,11 +9,11 @@ Run:
 `inference_tensorrt.py`
 
 ## Hardware:Jetson Nano.
-Models are converted to TensorRT unless noted.
+TRT notes TensorRT compiled models in the noted precision.
 
 Latency of image inference (1,3,256,256) [ms]
 
-|          | FP32 | FP16 | INT8 |
+|          | TRT FP32 | TRT FP16 | TRT INT8 |
 |:--------:|------|:----:|------|
 | resnet18 | 26   |  18  |      |
 | resnet34 | 48   |  30  |      |
@@ -23,31 +23,31 @@ Jetson Nano does not support INT8..
 
 ## Hardware:Jetson Xavier.
 
-Models are converted to TensorRT unless noted.
+TRT notes TensorRT compiled models in the noted precision.
 
 Latency of image inference (1,3,256,256) [ms]
 
 |      | resnet18 | resnet34 | resnet50 |
 |------|----------|----------|----------|
-| Raw  | 11       | 12       | 16       |
-| FP32 | 3.8      | 5.6      | 9.9      |
-| FP16 | 2.1      | 3.3      | 4.4      |
-| INT8 | 1.7      | 2.7      | 3.0     |
+| PytorchRaw  | 11       | 12       | 16       |
+| TRT FP32 | 3.8      | 5.6      | 9.9      |
+| TRT FP16 | 2.1      | 3.3      | 4.4      |
+| TRT INT8 | 1.7      | 2.7      | 3.0     |
 
 # Image segmentation
 ![beatles](imgs/addtensorrt_FP32.jpg)
 ## Hardware:Jetson Xavier.
 
-Models are converted to TensorRT unless noted.
+TRT notes TensorRT compiled models in the noted precision.
 
 Latency of image inference (1,3,512,512) [ms]
 
 |      | fcn_resnet50 | fcn_resnet101 | deeplabv3_resnet50 | deeplabv3_resnet101 |
 |------|--------------|---------------|--------------------|---------------------|
-| Raw  | 200          | 344           | 281                | 426                 |
-| FP32 | 173          | 290           | 252                | 366                 |
-| FP16 | 36           | 57            | 130                | 151                 |
-| INT8 | 21           | 32            | 97                 | 108                 |
+| PytorchRaw  | 200          | 344           | 281                | 426                 |
+| TRT FP32 | 173          | 290           | 252                | 366                 |
+| TRT FP16 | 36           | 57            | 130                | 151                 |
+| TRT INT8 | 21           | 32            | 97                 | 108                 |
 
 ## Hardware:Jetson Nano.
 
@@ -55,10 +55,10 @@ Latency of image inference (1,3,256,256) [ms]
 
 |      | fcn_resnet50 | 
 |------|--------------|
-| Raw  | 6800          | 
-| FP32 | 767          | 
-| FP16 | 40           | 
-| INT8 | NA           | 
+| PytorchRaw  | 6800          | 
+| TRT FP32 | 767          | 
+| TRT FP16 | 40           | 
+| TRT INT8 | NA           | 
 
 # Hardware setup
 The hardware setup seems tricky.
